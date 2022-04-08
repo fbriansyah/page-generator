@@ -26,11 +26,20 @@
   let formFilterFields = [];
   let tableHeaders = [];
 
-  $: editorField = getEditor(editorType);
-
   onMount(() => {
-    pageSettingState = getFieldState(formEditor);
-  });
+    const key = "editing-page";
+    let editingPage = localStorage.getItem(key);
+    let strData = localStorage.getItem(editingPage);
+    if(strData && strData !== '') {
+      const _pageSettingState = JSON.parse(strData) as TPageSetting;
+      pageSettingState = _pageSettingState;
+      tableHeaders = _pageSettingState.headers;
+    } else {
+      pageSettingState = getFieldState(formEditor);
+    }
+  })
+
+  $: editorField = getEditor(editorType);
 
   function changeMode() {
     if (mode === "render") {
@@ -116,6 +125,7 @@
       // console.log([...formFilterFields, addField(editorState)]);
       formFilterFields = [...formFilterFields, addField(editorState)];
     }
+    closeModal(which)
     // resetState();
   }
 
