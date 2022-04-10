@@ -47,3 +47,17 @@ declare type TPageSetting = {
   filter?: any[],
   editor?: any[]
 }
+declare type TEditorSetting = {
+  action: "change" | "add";
+  groupid: string |null;
+  id: number;
+  settings: {
+    kind: TFormKind;
+    child: any[] | null;
+    label: string;
+    name: string;
+    placeholder: string;
+    type: string;
+    options: TOption[]
+  }
+}

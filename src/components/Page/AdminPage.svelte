@@ -20,24 +20,29 @@
   let isFieldEditorShow = false;
   let editorType = null;
 
+  // States
   let pageSettingState = {};
   let editorState = {};
   let options = [];
-  let formFilterFields = [];
   let tableHeaders = [];
+  let editingState: TEditorSetting = {};
+
+  $: formFilterFields = $pageSetting.filter;
+  $: isFilterEditting = false;
 
   onMount(() => {
     const key = "editing-page";
     let editingPage = localStorage.getItem(key);
     let strData = localStorage.getItem(editingPage);
-    if(strData && strData !== '') {
+    if (strData && strData !== "") {
       const _pageSettingState = JSON.parse(strData) as TPageSetting;
       pageSettingState = _pageSettingState;
       tableHeaders = _pageSettingState.headers;
+      pageSetting.load(editingPage)
     } else {
       pageSettingState = getFieldState(formEditor);
     }
-  })
+  });
 
   $: editorField = getEditor(editorType);
 
@@ -59,10 +64,10 @@
 
   function resetState() {
     // pageSettingState = getFieldState(formEditor);
-
     editorState = {};
     editorType = null;
     options = [];
+    isFilterEditting = false;
   }
 
   const closeModal = (which: "page" | "field") => {
@@ -77,6 +82,11 @@
   function filterAction(e) {
     // TODO: Open Filter Settings Modal
     console.log("filter action", e.detail);
+    isFieldEditorShow = true;
+    editingState = e.detail as TEditorSetting;
+    editorType = e.detail.setting.kind;
+    editorState = { ...e.detail.setting };
+    isFilterEditting = true;
   }
 
   function changeFormEditor(which: "page" | "field", e) {
@@ -84,7 +94,6 @@
 
     if (which === "page") {
       pageSettingState[name] = value;
-
       pageSetting.change(pageSettingState as TPageSetting);
     } else if (which === "field") {
       if (name === "kind") {
@@ -94,38 +103,27 @@
     }
   }
 
-  // Add Field to form Filter
-  function addField(editorState) {
-    let _editorState = { ...editorState };
-    if (_editorState["kind"] && _editorState["kind"] === "gp") {
-      _editorState["id"] =
-        "gp-" +
-        (formFilterFields.filter((field) => field.kind === "gp").length + 1);
-      if (_editorState["type"] === "double") {
-        _editorState["child"] = [{ kind: "col" }, { kind: "col" }];
-      } else if (_editorState["type"] === "triple") {
-        _editorState["child"] = [
-          { kind: "col" },
-          { kind: "col" },
-          { kind: "col" },
-        ];
-      }
-    } else {
-      _editorState["child"] = null;
-    }
-    return _editorState;
-  }
-
+  // Modal Save Button Handler
   function modalSave(which: "page" | "field") {
     if (which === "page") {
       pageSettingState["headers"] = tableHeaders;
       pageSetting.change(pageSettingState as TPageSetting);
       pageSetting.save();
     } else if (which === "field") {
-      // console.log([...formFilterFields, addField(editorState)]);
-      formFilterFields = [...formFilterFields, addField(editorState)];
+      if (isFilterEditting) {
+        //
+        pageSetting.editFilterFields(
+          editingState.groupid,
+          editingState.id,
+          editingState.setting
+        );
+        isFilterEditting = false;
+      } else {
+        pageSetting.addFields("filter", editorState);
+        pageSetting.save();
+      }
     }
-    closeModal(which)
+    closeModal(which);
     // resetState();
   }
 
@@ -167,6 +165,7 @@
   }
 </script>
 
+<!-- Page Settings Modal-->
 <Modal
   title="Page Settings"
   isShow={isPageSettingModalShow}
@@ -185,6 +184,8 @@
     on:del={onHeaderDel}
   />
 </Modal>
+
+<!-- Modal Settings Modal -->
 <Modal
   title="Filter Settings"
   isShow={isFieldEditorShow}
@@ -220,7 +221,7 @@
   >
     <div class="flex-1 min-w-0">
       <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-        Halaman
+        {$pageSetting.title}
       </h1>
     </div>
     <div class="mt-4 flex sm:mt-0 sm:ml-4">
