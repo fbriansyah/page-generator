@@ -81,7 +81,7 @@
 
   function filterAction(e) {
     // TODO: Open Filter Settings Modal
-    console.log("filter action", e.detail);
+    
     isFieldEditorShow = true;
     editingState = e.detail as TEditorSetting;
     editorType = e.detail.setting.kind;
@@ -108,21 +108,21 @@
     if (which === "page") {
       pageSettingState["headers"] = tableHeaders;
       pageSetting.change(pageSettingState as TPageSetting);
-      pageSetting.save();
     } else if (which === "field") {
       if (isFilterEditting) {
         //
         pageSetting.editFilterFields(
           editingState.groupid,
           editingState.id,
-          editingState.setting
+          editorState
         );
         isFilterEditting = false;
       } else {
         pageSetting.addFields("filter", editorState);
-        pageSetting.save();
       }
     }
+
+    pageSetting.save();
     closeModal(which);
     // resetState();
   }

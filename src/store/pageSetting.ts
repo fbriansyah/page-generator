@@ -72,9 +72,12 @@ const createStore = () => {
       const _filter = [...state.filter];
       if (groupId) {
         // process edit field in group
+        const groupIndex = _filter.findIndex(v => v.id === groupId)
+        const _group = _filter[groupIndex];
+        _group["child"][id] = settings;
+        _filter[groupIndex] = _group;
       } else {
         // process singgle field
-        console.log(settings);
         _filter[id] = settings;
       }
       const newState = { ...state };
