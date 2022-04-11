@@ -34,7 +34,6 @@ const createStore = () => {
   const { subscribe, update, set } = writable<TPageSetting>(initialState);
 
   function change(settings: TPageSetting) {
-    console.log(settings);
     update((state) => {
       const newState = { ...state };
       const keys = Object.keys(settings);
@@ -44,6 +43,14 @@ const createStore = () => {
 
       return newState;
     });
+  }
+
+  function setEditor(editor: any[]) {
+    update(state => {
+      const newState = {...state};
+      newState['editor'] = editor;
+      return newState;
+    })
   }
 
   function addFields(which: "editor" | "filter", editorState: {}) {
@@ -107,6 +114,7 @@ const createStore = () => {
     change,
     addFields,
     editFilterFields,
+    setEditor,
     save,
     load,
   };
