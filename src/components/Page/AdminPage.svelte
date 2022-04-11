@@ -259,5 +259,5 @@
     />
   </div>
 
-  <Table />
+  <Table headers={$pageSetting.headers} />
 </Layout>
