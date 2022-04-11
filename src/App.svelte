@@ -1,11 +1,14 @@
 <script lang="ts">
   import AdminPage from "./components/Page/AdminPage.svelte";
   import Page from "./components/Page/FormEditorPage.svelte";
+  import { pageModeStore } from "./store/pageMode";
 
 </script>
-
-<!-- <Page /> -->
-<AdminPage />
+{#if $pageModeStore === "page"}
+  <AdminPage />
+{:else}
+  <Page />
+{/if}
 
 <style global lang="postcss">
   /* purgecss start ignore */
