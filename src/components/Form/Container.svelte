@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { editorPageSetting } from "../../store/editor";
+  import { pageModeStore } from "../../store/pageMode";
   import { sectionsStore } from "../../store/sections";
 
   import FormTitle from "./FormTitle.svelte";
@@ -52,20 +53,21 @@
   {/each}
 
   {#if $sectionsStore.length > 0}
-  <div class="flex justify-end">
-    <button
-      type="button"
-      class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-    >
-      Cancel
-    </button>
-    <button
-      type="button"
-      on:click={onSubmit}
-      class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-    >
-      Save
-    </button>
-  </div>
+    <div class="flex justify-end">
+      <button
+        on:click={() => pageModeStore.page()}
+        type="button"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+      >
+        Close
+      </button>
+      <button
+        type="button"
+        on:click={onSubmit}
+        class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+      >
+        Save
+      </button>
+    </div>
   {/if}
 </div>

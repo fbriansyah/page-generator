@@ -1,4 +1,6 @@
 import { writable } from "svelte/store";
+import {convertFieldToArray} from '../utils/form'
+import { arrayToPage, pageToArray } from "../utils/page";
 
 const initialState: TPageSetting = {
   title: "",
@@ -97,7 +99,9 @@ const createStore = () => {
   function save() {
     // TODO: Send to server
     subscribe((state) => {
-      localStorage.setItem("page-" + state["endpoint"], JSON.stringify(state));
+      const _arrState = pageToArray(state)
+      console.log(_arrState)
+      localStorage.setItem("page-" + state["endpoint"], JSON.stringify(_arrState));
     });
   }
 
@@ -105,7 +109,8 @@ const createStore = () => {
     const strData = localStorage.getItem(key);
 
     if (strData && strData !== "") {
-      set(JSON.parse(strData));
+      const _state = JSON.parse(strData);
+      set(arrayToPage(_state));
     }
   }
 

@@ -11,6 +11,7 @@
   import { editorPageSetting } from "../../store/editor";
   import { sectionsStore } from "../../store/sections";
   import OptionsEditor from "./OptionsEditor.svelte";
+  import { pageModeStore } from "../../store/pageMode";
 
   let state = {};
   let isModalShow = false;
@@ -29,8 +30,8 @@
 
   const onSubmit = () => {
     if (editorMode === "add") {
-      if(state["kind"] === 'so2') {
-        state["options"] = options
+      if (state["kind"] === "so2") {
+        state["options"] = options;
       }
       sectionsStore.addFields(editorSetting["section-id"], state);
     }
@@ -71,7 +72,7 @@
       editorSetting = { ...e.detail };
       editorType = e.detail.setting.kind;
       state = e.detail.setting;
-      options = [...state["options"]]
+      options = [...state["options"]];
     }
   };
 
@@ -144,7 +145,7 @@
   }
 
   function onOptionEditorDel(e) {
-    options = options.filter((opt, i) => i !== e.detail)
+    options = options.filter((opt, i) => i !== e.detail);
   }
 </script>
 
@@ -206,10 +207,11 @@
 
   <div class="flex justify-end">
     <button
+      on:click={() => pageModeStore.page()}
       type="button"
       class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
     >
-      Cancel
+      Close
     </button>
     <button
       type="button"

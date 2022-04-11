@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import { arrayToSection, convertSectionToArray } from "../utils/form";
+import { pageSetting } from "./pageSetting";
 
 const createSectionsStore = () => {
   const { subscribe, update, set } = writable([]);
@@ -48,9 +49,10 @@ const createSectionsStore = () => {
   const saveToLocal = () => {
     if (localStorage) {
       update((sections) => {
-        console.log(sections)
-        const _sectionArr = convertSectionToArray(sections)
-        localStorage.setItem("sections", JSON.stringify(_sectionArr));
+        const _sectionArr = convertSectionToArray(sections);
+        pageSetting.setEditor(_sectionArr);
+        pageSetting.save();
+        // localStorage.setItem("sections", JSON.stringify(_sectionArr));
         return sections;
       });
     }
@@ -58,9 +60,12 @@ const createSectionsStore = () => {
 
   const getFromLocal = () => {
     if (localStorage) {
-      const _sectionsStringArr = localStorage.getItem("sections");
-      const _sectionsArr = JSON.parse(_sectionsStringArr);
-      const _sections = arrayToSection(_sectionsArr)
+      // const _sectionsStringArr = localStorage.getItem("sections");
+      let _sectionsArr = [];
+      pageSetting.subscribe((state) => {
+        _sectionsArr = state.editor;
+      });
+      const _sections = arrayToSection(_sectionsArr);
       if (_sections) {
         set(_sections);
       }
@@ -94,7 +99,7 @@ const createSectionsStore = () => {
         description: state["section-description"],
       };
 
-      return _sections
+      return _sections;
     });
   };
 
@@ -106,7 +111,7 @@ const createSectionsStore = () => {
     getFromLocal,
     addSection,
     deleteSection,
-    updateSection
+    updateSection,
   };
 };
 

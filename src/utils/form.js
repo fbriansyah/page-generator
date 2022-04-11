@@ -56,7 +56,7 @@ export function arrayToSection(sections) {
   return result
 }
 
-function convertFieldToArray(fields) {
+export function convertFieldToArray(fields) {
   let result = [];
   for (const f of fields) {
     if(f.kind === 'col') {
@@ -85,7 +85,7 @@ function convertFieldToArray(fields) {
   return result;
 }
 
-function arrayToFields(fields) {
+export function arrayToFields(fields) {
   let result = []
   
   for(const f of fields) {
